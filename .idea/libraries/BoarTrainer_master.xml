@@ -1,0 +1,11 @@
+<component name="libraryTable">
+  <library name="BoarTrainer-master">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/java-json.jar!/" />
+      <root url="jar://$PROJECT_DIR$/javax.mail.jar!/" />
+      <root url="jar://$PROJECT_DIR$/mysql-connector-java-5.0.8-bin.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>
