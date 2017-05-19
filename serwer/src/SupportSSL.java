@@ -187,11 +187,14 @@ public class SupportSSL extends Thread {
             AUTH_CODE = 1111;
             AUTH_CODE_OWNER_ID = temp_user_id;
 
+            System.out.println("tttuuudusaduasud");
+
 
             if(verify_method.equals("EMAIL")){
-                String email= rs.getString("EMAIL");
-                if(!SendEmail(email,AUTH_CODE)){
-                    System.out.println("sass");return GetErrorJSON("ServerError");}
+
+//                String email= rs.getString("EMAIL");
+//                if(!SendEmail(email,AUTH_CODE)){
+//                    System.out.println("sass");return GetErrorJSON("ServerError");}
             }
             else if(verify_method.equals("PHONE")){
                 int phone = rs.getInt("PHONE");

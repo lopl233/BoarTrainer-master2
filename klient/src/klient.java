@@ -91,7 +91,7 @@ public class klient {
 
             BufferedReader br = new BufferedReader(new InputStreamReader(sslConnector.sslsocket.getInputStream()));
             String serverAnswer = br.readLine();
-
+            System.out.println(serverAnswer);
             JSONObject JSONanswer = new JSONObject(serverAnswer);
             System.out.println(JSONanswer.getString("message_type"));
             System.out.println(JSONanswer.getString("error_type"));
@@ -156,9 +156,9 @@ public class klient {
         //System.out.println(logIn("admin", "haslo",1232134));
         //AddDevice("admin","haslo",1232134,1111);
         //Register("admin","haslo","dziki","dzik");
-        Register("dzikusek2","dzikus","elo","ja","lopl233@o2.pl",791970371,"EMAIL");
+        //Register("dzikusek2","dzikus","elo","ja","lopl233@o2.pl",791970371,"EMAIL");
         logIn("dzikusek2","dzikus",1234);
-        AddDevice("dzikusek2","dzikus",1234,1111);
-        GetData();
+        //AddDevice("dzikusek2","dzikus",1234,1111);
+        //GetData();
     }
 }
