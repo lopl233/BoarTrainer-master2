@@ -1,3 +1,4 @@
+import java.sql.Connection;
 
 public class serwer{
 
@@ -11,7 +12,7 @@ public class serwer{
         System.setProperty("javax.net.ssl.trustStoreType","PKCS12");
 
 
-
+        ConnectionPool.getInstance();
 
 
 

@@ -11,7 +11,7 @@ public class ConnectionPool {
 
     Vector<Connection> freeConnections = new Vector<Connection>();
     Map<Connection,LocalDateTime> occupiedConnections = new HashMap<Connection,LocalDateTime>();
-    int connectionLiveTime = 3; // czas ważności połączenia w sekundach
+    int connectionLiveTime = 20; // czas ważności połączenia w sekundach
     private static ConnectionPool instance = null;
     public synchronized static ConnectionPool getInstance() {
         if(instance == null) {
@@ -61,7 +61,7 @@ public class ConnectionPool {
 
         try {
             Class.forName("com.mysql.jdbc.Driver");
-            for(int temp=0; temp<20; temp++)
+            for(int temp=0; temp<100; temp++)
                 freeConnections.add(DriverManager.getConnection("jdbc:mysql://localhost:3306/dzik?" +
                         "useUnicode=true" +
                         "&useJDBCCompliantTimezoneShift=true" +
