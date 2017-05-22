@@ -42,12 +42,9 @@ public class SupportSSL extends Thread {
     public void run() {
         while (true) {
             try {
-
                 BufferedReader br = new BufferedReader(new InputStreamReader(sslsocket.getInputStream()));
                 PrintWriter pw = new PrintWriter(sslsocket.getOutputStream());
-
                 String data = br.readLine();
-
                 if (!(data == null))
                     try {
                         System.out.println("Wiadomosc od usera'a: "+USER_ID+"=  "+data);
@@ -58,8 +55,6 @@ public class SupportSSL extends Thread {
                         pw.println(GetErrorJSON("JSONPARSE"));
                         pw.flush();
                 }
-
-
             } catch (SocketException ioe) {return;
             } catch (IOException ioe) {return;}
         }//koniec while'a
