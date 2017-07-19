@@ -1,0 +1,16 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="BoarTrainer-master:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/BoarTrainer_master_jar</output-path>
+    <root id="archive" name="BoarTrainer-master.jar">
+      <element id="directory" name="META-INF">
+        <element id="file-copy" path="$PROJECT_DIR$/../META-INF/MANIFEST.MF" />
+      </element>
+      <element id="module-output" name="klient" />
+      <element id="module-output" name="serwer" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/java-json.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/javax.mail.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/mysql-connector-java-5.0.8-bin.jar" path-in-jar="/" />
+      <element id="library" level="project" name="BoarTrainer-master" />
+    </root>
+  </artifact>
+</component>

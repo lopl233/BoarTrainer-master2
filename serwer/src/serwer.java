@@ -17,9 +17,12 @@ public class serwer{
 
 
         socketSSL socketssl = socketSSL.getInstance();
+
+        System.out.println("Server Started");
+
         while(true) {
             new SupportSSL(socketssl.AceptSSL()).start();
-            System.out.println("Wow wow nowy klient");
+            System.out.println("New client");
         }
     }
 
