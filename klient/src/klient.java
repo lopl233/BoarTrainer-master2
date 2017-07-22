@@ -110,35 +110,53 @@ class main{
         klient_reciver = new Klient_reciver();
         Scanner scanner = new Scanner(System.in);
         String choice = "";
+        String login = "";
+        String password = "";
+        String email = "";
+        String verify_way = "";
+        String name = "";
+        String lastname = "";
+        int phone = 0;
+
+
         while(true){
+            System.out.println("Wybierz akcje");
             System.out.println("1. Login");
             System.out.println("2. Get user data");
             System.out.println("3. Add device");
-            System.out.println("4. Login");
-            System.out.println("5. Login");
 
 
             choice = scanner.next();
             switch (choice) {
                 case "1":
                     System.out.println("Login : ");
-                    String login = scanner.next();
+                    login = scanner.next();
                     System.out.println("Haslo : ");
-                    String password = scanner.next();
+                    password = scanner.next();
                     System.out.println("ID urzadzenia : ");
                     int device_id = scanner.nextInt();
                     klient_reciver.logIn(login, password, device_id);
                     break;
                 case "2":
+                    System.out.println("Login : ");
+                    login = scanner.next();
+                    System.out.println("Haslo : ");
+                    password = scanner.next();
+                    System.out.println("Imie : ");
+                    name = scanner.next();
+                    System.out.println("Nazwisko : ");
+                    lastname = scanner.next();
+                    System.out.println("Email : ");
+                    email = scanner.next();
+                    System.out.println("Telefon : ");
+                    phone = scanner.nextInt();
+                    System.out.println("Sposob weryfikacji : ");
+                    verify_way = scanner.next();
+                    klient_reciver.Register(login, password, name, lastname, email, phone, verify_way);
                     break;
                 case "3":
+                    klient_reciver.GetData();
                     break;
-                case "4":
-                    break;
-                case "5":
-                    break;
-
-
             }
 
 
