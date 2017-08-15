@@ -12,10 +12,7 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.Properties;
-import java.util.Random;
+import java.util.*;
 
 public class Fasade {
     ConnectionPool connectionPool = ConnectionPool.getInstance();
@@ -148,41 +145,64 @@ public class Fasade {
         }
         return sb.toString();
     }
-
-    public static void main(String[] args) {
-        String user_id = "213";
-        String devide_id = "222";
-        String sql = "SELECT * FROM devices where USER_ID = "+user_id+" and DEVICE_ID = "+ devide_id;
-        String sql2 = String.format("SELECT * FROM devices where USER_ID = %s and DEVICE_ID = %s", user_id, devide_id);
-        System.out.println(sql);
-        System.out.println(sql2);
-    }
     private void SendEmail(String email,int kod) throws MessagingException {
-            Properties mailServerProperties;
-            Session getMailSession;
-            MimeMessage generateMailMessage;
+        Properties mailServerProperties;
+        Session getMailSession;
+        MimeMessage generateMailMessage;
 
-            mailServerProperties = System.getProperties();
-            mailServerProperties.put("mail.smtp.port", "587");
-            mailServerProperties.put("mail.smtp.auth", "true");
-            mailServerProperties.put("mail.smtp.starttls.enable", "true");
-            mailServerProperties.put("mail.smtp.ssl.trust", "smtp.gmail.com");
+        mailServerProperties = System.getProperties();
+        mailServerProperties.put("mail.smtp.port", "587");
+        mailServerProperties.put("mail.smtp.auth", "true");
+        mailServerProperties.put("mail.smtp.starttls.enable", "true");
+        mailServerProperties.put("mail.smtp.ssl.trust", "smtp.gmail.com");
 
-            getMailSession = Session.getDefaultInstance(mailServerProperties, null);
-            generateMailMessage = new MimeMessage(getMailSession);
-            generateMailMessage.addRecipient(Message.RecipientType.TO, new InternetAddress(email));
-            generateMailMessage.addRecipient(Message.RecipientType.CC, new InternetAddress(email));
-            generateMailMessage.setSubject("Twoj kod do weryfikacji");
-            String emailBody = "Twoj kod to :  " + kod;
-            generateMailMessage.setContent(emailBody, "text/html");
+        getMailSession = Session.getDefaultInstance(mailServerProperties, null);
+        generateMailMessage = new MimeMessage(getMailSession);
+        generateMailMessage.addRecipient(Message.RecipientType.TO, new InternetAddress(email));
+        generateMailMessage.addRecipient(Message.RecipientType.CC, new InternetAddress(email));
+        generateMailMessage.setSubject("Twoj kod do weryfikacji");
+        String emailBody = "Twoj kod to :  " + kod;
+        generateMailMessage.setContent(emailBody, "text/html");
 
-            Transport transport = getMailSession.getTransport("smtp");
+        Transport transport = getMailSession.getTransport("smtp");
 
-            transport.connect("smtp.gmail.com", "boartrainer", "dzikidzik");
-            transport.sendMessage(generateMailMessage, generateMailMessage.getAllRecipients());
-            transport.close();
+        transport.connect("smtp.gmail.com", "boartrainer", "dzikidzik");
+        transport.sendMessage(generateMailMessage, generateMailMessage.getAllRecipients());
+        transport.close();
     }//koniec funkcji wysylania maila
 
     private void SendSMS(int number,int kod){return;}//koniec funkcji wysylania maila
+
+
+
+    public List<String> GetRTrainingProposition(int user_id){
+        List<String> lista = new ArrayList<>();
+        Map<String,String> data = new LinkedHashMap<>();
+        data.put("trainind_id", "1");
+        data.put("description", "opis fbw 1");
+        data.put("percentage", "100");
+        lista.add(new JSONObject(data).toString());
+        data = new LinkedHashMap<>();
+        data.put("trainind_id", "2");
+        data.put("description", "opis fbw 2");
+        data.put("percentage", "80");
+        lista.add(new JSONObject(data).toString());
+
+        for (String a: lista
+             ) {
+            System.out.println(a);
+
+        }
+        return lista;
+
+
+    }
+
+    public static void main(String[] args) {
+        Fasade fasade = new Fasade();
+        fasade.GetRTrainingProposition(1);
+        System.exit(0);
+    }
+
 
 }

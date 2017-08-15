@@ -81,6 +81,7 @@ public class SupportSSL extends Thread {
             case "UpdateClientData" : return UpdateClientData(message);
             case "RegisterNewClient" : return RegisterNewClient(message);
             case "AddDevice" : return  AddDevice(message);
+            case "TrainingProposition" : return  TrainingProposition(message);
             default : return GetErrorJSON("WrongMessageType");
         }
         } catch (JSONException|SQLException| MessagingException| ClassNotFoundException e) {return GetErrorJSON("ServerError");}
@@ -182,4 +183,15 @@ public class SupportSSL extends Thread {
             data.put("message_type", "UpdateClientData");
             return new JSONObject(data);
     }
+
+    private JSONObject TrainingProposition(JSONObject message) throws JSONException, SQLException, ClassNotFoundException {
+        if(USER_ID==-1){return GetErrorJSON("NotLogged");}
+        fasade.GetRTrainingProposition(USER_ID);
+        Map<String, String> data = new LinkedHashMap<>();
+        data.put("message_type", "TrainingProposition");
+        data.put("trainings ",fasade.GetRTrainingProposition(USER_ID).toString());
+        return new JSONObject(data);
+    }
+
+
 }

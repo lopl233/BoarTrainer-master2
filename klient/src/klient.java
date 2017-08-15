@@ -68,6 +68,11 @@ class Klient_reciver {
         data.put("message_type", "GetBasicData");
         return reciver(data);
     }
+    public JSONObject GetTrainingPropositions() throws IOException, JSONException {
+        Map<String, String> data = new LinkedHashMap<>();
+        data.put("message_type", "TrainingProposition");
+        return reciver(data);
+    }
     public JSONObject AddDevice(String login, String password, int device_id,int kod) throws IOException, JSONException {
         Map<String, String> data = new LinkedHashMap<>();
         data.put("message_type", "AddDevice");
@@ -100,7 +105,7 @@ class Klient_reciver {
         return result;
     }
 
-}//koniec klasy klient
+}//koniec klasy klient_reciver
 
 
 class main{
@@ -124,6 +129,7 @@ class main{
             System.out.println("1. Login");
             System.out.println("2. Get user data");
             System.out.println("3. Add device");
+            System.out.println("4. Training Propositions");
 
 
             choice = scanner.next();
@@ -154,10 +160,15 @@ class main{
                     verify_way = scanner.next();
                     klient_reciver.Register(login, password, name, lastname, email, phone, verify_way);
                     break;
+
                 case "3":
                     klient_reciver.GetData();
                     break;
-            }
+
+                case "4":
+                    klient_reciver.GetTrainingPropositions();
+                    break;
+        }
 
 
         }
