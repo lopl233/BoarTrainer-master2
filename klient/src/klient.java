@@ -104,6 +104,14 @@ class Klient_reciver {
 
         return reciver(data);
     }
+
+    public JSONObject ExerciseReplacement(int exercise_id, int id_replacment_group) throws IOException, JSONException {
+        Map<String, String> data = new LinkedHashMap<>();
+        data.put("message_type", "ExerciseReplacement");
+        data.put("exercise_id", Integer.toString(exercise_id));
+        data.put("id_replacment_group", Integer.toString(id_replacment_group));
+        return reciver(data);
+    }
     public String JsonToString(JSONObject jsonObject) throws JSONException {
         String result = "";
         Iterator<?> keys = jsonObject.keys();
@@ -133,6 +141,8 @@ class main{
         int phone = 0;
         int training_id = 0;
         boolean start = false;
+        int exercise_id = 0;
+        int id_replacement_group = 0;
 
 
         while(true){
@@ -143,6 +153,8 @@ class main{
             System.out.println("4. Training Propositions");
             System.out.println("5. Get and Start Training");
             System.out.println("6. Add device");
+            System.out.println("7. Exercise Replacement");
+
 
 
             choice = scanner.next();
@@ -197,6 +209,13 @@ class main{
                     device_id = scanner.nextInt();
                     klient_reciver.AddDevice(login, password, device_id, 1111);
                     break;
+                case "7":
+                    System.out.println("Id cwiczenia : ");
+                    exercise_id = scanner.nextInt();
+                    System.out.println("Id grupy : ");
+                    id_replacement_group = scanner.nextInt();
+                    klient_reciver.ExerciseReplacement(exercise_id, id_replacement_group);
+
             }
 
         }

@@ -75,17 +75,20 @@ public class SupportSSL extends Thread {
         try {
             message_type = message.getString("message_type");
 
-        switch (message_type){
-            case "LoginRequest" : return LoginRequest(message);
-            case "GetBasicData" : return GetBasicData();
-            case "UpdateClientData" : return UpdateClientData(message);
-            case "RegisterNewClient" : return RegisterNewClient(message);
-            case "AddDevice" : return  AddDevice(message);
-            case "TrainingProposition" : return  TrainingProposition(message);
-            case "GetTraining" : return GetTraining(message);
-            default : return GetErrorJSON("WrongMessageType");
-        }
-        } catch (JSONException|SQLException| MessagingException| ClassNotFoundException e) {return GetErrorJSON("ServerError");}
+            switch (message_type){
+                case "LoginRequest" : return LoginRequest(message);
+                case "GetBasicData" : return GetBasicData();
+                case "UpdateClientData" : return UpdateClientData(message);
+                case "RegisterNewClient" : return RegisterNewClient(message);
+                case "AddDevice" : return  AddDevice(message);
+                case "TrainingProposition" : return  TrainingProposition(message);
+                case "GetTraining" : return GetTraining(message);
+                case "ExerciseReplacement" : return ExerciseReplacement(message);
+                default : return GetErrorJSON("WrongMessageType");
+            }
+        } catch (JSONException|SQLException| MessagingException| ClassNotFoundException e) {
+            System.out.println(e.toString());
+            return GetErrorJSON("ServerError");}
     }
 
 
@@ -199,6 +202,14 @@ public class SupportSSL extends Thread {
         Map<String, String> data = new LinkedHashMap<>();
         data.put("message_type", "GetTraining");
         data.put("exercises ",fasade.GetTrainingExercises(message.getInt("training_id")).toString());
+        return new JSONObject(data);
+    }
+
+    private JSONObject ExerciseReplacement(JSONObject message) throws JSONException, SQLException, ClassNotFoundException {
+        if(USER_ID==-1){return GetErrorJSON("NotLogged");}
+        Map<String, String> data = new LinkedHashMap<>();
+        data.put("message_type", "ExerciseReplacement");
+        data.put("exercises ",fasade.ExerciseReplacement(message.getInt("exercise_id"),message.getInt("id_replacment_group") ).toString());
         return new JSONObject(data);
     }
 

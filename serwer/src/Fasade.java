@@ -180,6 +180,7 @@ public class Fasade {
         Statement stmt = connection.createStatement();
         String sql = String.format("SELECT * FROM `training_exercise` as A join exercise as B on A.exercise_id = B.exercise_id WHERE A.training_id = %s order by A.order_in_training", Integer.toString(training_id));
         ResultSet rs = stmt.executeQuery(sql);
+        connectionPool.releaseConnection(connection);
         Map<String,String> data = new LinkedHashMap<>();
 
         while (rs.next()) {
@@ -208,19 +209,32 @@ public class Fasade {
         data.put("percentage", "80");
         lista.add(new JSONObject(data).toString());
 
-        for (String a: lista
-             ) {
-            System.out.println(a);
-
-        }
         return lista;
+    }
+
+    public List<String> ExerciseReplacement(int exercise_id, int id_replacement_group) throws SQLException {
+        List<String> lista = new ArrayList<>();
+        Connection connection = connectionPool.getConnection();
+        Statement stmt = connection.createStatement();
+        String sql = String.format("SELECT exercise_id, exercise_name FROM `replacment_group` join exercise on replacment_group.id_exercise = exercise.exercise_id WHERE id = %s and id_exercise != %s", Integer.toString(id_replacement_group),Integer.toString(exercise_id));
+        ResultSet rs = stmt.executeQuery(sql);
+        connectionPool.releaseConnection(connection);
+        Map<String,String> data = new LinkedHashMap<>();
+        while (rs.next()){
+            data = new LinkedHashMap<>();
+            data.put("exercise_id",rs.getString("exercise_id"));
+            data.put("exercise_name",rs.getString("exercise_name"));
+            lista.add(new JSONObject(data).toString());
+        }
 
 
+
+        return lista;
     }
 
     public static void main(String[] args) throws SQLException {
         Fasade fasade = new Fasade();
-        List <String> lista = fasade.GetTrainingExercises(1);
+        List <String> lista = fasade.ExerciseReplacement(1,1);
         for (String x: lista) {
             System.out.println(x);
         }
