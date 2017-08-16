@@ -95,6 +95,15 @@ class Klient_reciver {
         data.put("verify_way",verify_way);
         return reciver(data);
     }
+
+    public JSONObject GetTraining(int training_id, boolean start) throws IOException, JSONException {
+        Map<String, String> data = new LinkedHashMap<>();
+        data.put("message_type", "GetTraining");
+        data.put("training_id", Integer.toString(training_id));
+        data.put("start_training", Boolean.toString(start));
+
+        return reciver(data);
+    }
     public String JsonToString(JSONObject jsonObject) throws JSONException {
         String result = "";
         Iterator<?> keys = jsonObject.keys();
@@ -122,14 +131,18 @@ class main{
         String name = "";
         String lastname = "";
         int phone = 0;
+        int training_id = 0;
+        boolean start = false;
 
 
         while(true){
             System.out.println("Wybierz akcje");
             System.out.println("1. Login");
-            System.out.println("2. Get user data");
-            System.out.println("3. Add device");
+            System.out.println("2. Register");
+            System.out.println("3. Get user data");
             System.out.println("4. Training Propositions");
+            System.out.println("5. Get and Start Training");
+            System.out.println("6. Add device");
 
 
             choice = scanner.next();
@@ -168,8 +181,23 @@ class main{
                 case "4":
                     klient_reciver.GetTrainingPropositions();
                     break;
-        }
-
+                case "5":
+                    System.out.println("Id treningu : ");
+                    training_id = scanner.nextInt();
+                    System.out.println("Czy rozpoczac od razu? : ");
+                    start = scanner.nextBoolean();
+                    klient_reciver.GetTraining(training_id, start);
+                    break;
+                case "6":
+                    System.out.println("Login : ");
+                    login = scanner.next();
+                    System.out.println("Haslo : ");
+                    password = scanner.next();
+                    System.out.println("Device id : ");
+                    device_id = scanner.nextInt();
+                    klient_reciver.AddDevice(login, password, device_id, 1111);
+                    break;
+            }
 
         }
 

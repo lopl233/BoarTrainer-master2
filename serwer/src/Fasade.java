@@ -174,6 +174,26 @@ public class Fasade {
     private void SendSMS(int number,int kod){return;}//koniec funkcji wysylania maila
 
 
+    public List<String> GetTrainingExercises(int training_id) throws SQLException {
+        List<String> lista = new ArrayList<>();
+        Connection connection = connectionPool.getConnection();
+        Statement stmt = connection.createStatement();
+        String sql = String.format("SELECT * FROM `training_exercise` as A join exercise as B on A.exercise_id = B.exercise_id WHERE A.training_id = %s order by A.order_in_training", Integer.toString(training_id));
+        ResultSet rs = stmt.executeQuery(sql);
+        Map<String,String> data = new LinkedHashMap<>();
+
+        while (rs.next()) {
+            data = new LinkedHashMap<>();
+            data.put("exercise_id", rs.getString("exercise_id"));
+            data.put("id_replacment_group", rs.getString("id_replacment_group"));
+            data.put("description", rs.getString("description"));
+            data.put("video_link", rs.getString("video_link"));
+            data.put("exercise_name", rs.getString("exercise_name"));
+            lista.add(new JSONObject(data).toString());
+        }
+
+        return lista;
+    }
 
     public List<String> GetRTrainingProposition(int user_id){
         List<String> lista = new ArrayList<>();
@@ -198,9 +218,12 @@ public class Fasade {
 
     }
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws SQLException {
         Fasade fasade = new Fasade();
-        fasade.GetRTrainingProposition(1);
+        List <String> lista = fasade.GetTrainingExercises(1);
+        for (String x: lista) {
+            System.out.println(x);
+        }
         System.exit(0);
     }
 

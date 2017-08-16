@@ -82,6 +82,7 @@ public class SupportSSL extends Thread {
             case "RegisterNewClient" : return RegisterNewClient(message);
             case "AddDevice" : return  AddDevice(message);
             case "TrainingProposition" : return  TrainingProposition(message);
+            case "GetTraining" : return GetTraining(message);
             default : return GetErrorJSON("WrongMessageType");
         }
         } catch (JSONException|SQLException| MessagingException| ClassNotFoundException e) {return GetErrorJSON("ServerError");}
@@ -133,7 +134,8 @@ public class SupportSSL extends Thread {
             int verify_code = klientRequest.getInt("verify_code");
             if(verify_code == AUTH_CODE){
                 int temp_user_id = fasade.addDevice(device_id, login,password);
-                if(temp_user_id != -1){Map<String, String> data = new LinkedHashMap<>();
+                if(temp_user_id == -1){
+                    Map<String, String> data = new LinkedHashMap<>();
                     data.put("message_type", "AddDevice");
                     data.put("added", "false");
                     data.put("text","wrong login/password");
@@ -168,7 +170,7 @@ public class SupportSSL extends Thread {
         String email = message.getString("EMAIL");
         int phone = message.getInt("PHONE");
         String verify_way = message.getString("verify_way");
-        if (fasade.Register(login, password, imie, nazwisko, email, phone, verify_way)) {return GetErrorJSON("LoginTaken");}
+        if (!fasade.Register(login, password, imie, nazwisko, email, phone, verify_way)) {return GetErrorJSON("LoginTaken");}
         Map<String, String> data = new LinkedHashMap<>();
         data.put("message_type", "RegisterNewClient");
         return new JSONObject(data);
@@ -186,10 +188,17 @@ public class SupportSSL extends Thread {
 
     private JSONObject TrainingProposition(JSONObject message) throws JSONException, SQLException, ClassNotFoundException {
         if(USER_ID==-1){return GetErrorJSON("NotLogged");}
-        fasade.GetRTrainingProposition(USER_ID);
         Map<String, String> data = new LinkedHashMap<>();
         data.put("message_type", "TrainingProposition");
         data.put("trainings ",fasade.GetRTrainingProposition(USER_ID).toString());
+        return new JSONObject(data);
+    }
+
+    private JSONObject GetTraining(JSONObject message) throws JSONException, SQLException, ClassNotFoundException {
+        if(USER_ID==-1){return GetErrorJSON("NotLogged");}
+        Map<String, String> data = new LinkedHashMap<>();
+        data.put("message_type", "GetTraining");
+        data.put("exercises ",fasade.GetTrainingExercises(message.getInt("training_id")).toString());
         return new JSONObject(data);
     }
 
