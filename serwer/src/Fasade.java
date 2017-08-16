@@ -190,6 +190,7 @@ public class Fasade {
             data.put("description", rs.getString("description"));
             data.put("video_link", rs.getString("video_link"));
             data.put("exercise_name", rs.getString("exercise_name"));
+            data.put("reps", rs.getString("reps"));
             lista.add(new JSONObject(data).toString());
         }
 
