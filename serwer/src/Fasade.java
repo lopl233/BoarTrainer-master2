@@ -88,7 +88,7 @@ public class Fasade {
     public ResultSet GetBasicData(int user_id) throws SQLException {
         Connection connection = connectionPool.getConnection();
         Statement stmt = connection.createStatement();
-        String sql = "SELECT * FROM USER_DATA WHERE USER_ID ='"+user_id+"'";
+        String sql = "SELECT * FROM user_data WHERE USER_ID ='"+user_id+"'";
         ResultSet rs = stmt.executeQuery(sql);
         connectionPool.releaseConnection(connection);
         return rs;
@@ -108,17 +108,46 @@ public class Fasade {
         rs = stmt.executeQuery(sql);
         rs.next();
         String User_ID = rs.getString("USER_ID");
-        sql = "INSERT INTO `USER_DATA` (`USER_ID`, `NAME`, `LASTNAME`, `EMAIL`, `PHONE`) VALUES ('"
+        sql = "INSERT INTO `user_data` (`USER_ID`, `NAME`, `LASTNAME`, `EMAIL`, `PHONE`) VALUES ('"
                 +User_ID+"', '"+imie+"', '"+nazwisko+"','"+email+"',"+phone+")";
         stmt.executeUpdate(sql);
         connectionPool.releaseConnection(connection);
         return true;
     }
-    public void UpdateData(String imie, String nazwisko, int user_id) throws SQLException {
+    public void UpdateData(String imie, String nazwisko, int phone, String email, int user_id) throws SQLException {
         Connection connection = connectionPool.getConnection();
         Statement stmt = connection.createStatement();
-        String sql = "UPDATE user_data set NAME = '"+imie+"', LASTNAME = '"+nazwisko+"' where USER_ID = '"+user_id+"'";
-        stmt.executeQuery(sql);
+        String sql = String.format("UPDATE user_data set NAME = '%s', LASTNAME = '%s', PHONE = '%s', EMAIL = '%s' where USER_ID = '%s'",
+                        imie,nazwisko,Integer.toString(phone), email, Integer.toString(user_id));
+        stmt.executeUpdate(sql);
+        connectionPool.releaseConnection(connection);
+    }
+
+    public void InsertParameters(int user_id, int age, int height, int weight, String fraquency, String advancement_level , String goal) throws SQLException {
+        Connection connection = connectionPool.getConnection();
+        Statement stmt = connection.createStatement();
+        String sql = String.format("INSERT INTO `user_parameters` (`USER_ID`, `AGE`, `HEIGH`, `WEIGH`, `FRAQUENCY`, `ADVANCMENT_LEVEL`, `GOAL`, `DATA_DODANIA`) VALUES ('%s', '%s', '%s', '%s', '%s', '%s', '%s', CURRENT_TIMESTAMP)",
+                user_id, age, height, weight, fraquency, advancement_level, goal);
+        stmt.executeUpdate(sql);
+        connectionPool.releaseConnection(connection);
+    }
+
+    public ResultSet GetParamenters(int user_id)throws SQLException{
+        Connection connection = connectionPool.getConnection();
+        Statement stmt = connection.createStatement();
+        String sql = String.format("SELECT * FROM user_parameters where USER_ID = '%s' order by DATA_DODANIA DESC",user_id);
+        ResultSet rs = stmt.executeQuery(sql);
+        connectionPool.releaseConnection(connection);
+        return rs;
+    }
+
+    public void ChangePassword(int user_id, String new_password, String old_password)throws SQLException{
+        Connection connection = connectionPool.getConnection();
+        Statement stmt = connection.createStatement();
+        String OLDPASS = hashString(old_password);
+        String NEWPASS = hashString(new_password);
+        String sql = String.format("UPDATE logins set PASSWORD = '%s' WHERE USER_ID = '%s' and PASSWORD = '%s'", NEWPASS, user_id, OLDPASS);
+        stmt.executeUpdate(sql);
         connectionPool.releaseConnection(connection);
     }
 
@@ -227,9 +256,6 @@ public class Fasade {
             data.put("exercise_name",rs.getString("exercise_name"));
             lista.add(new JSONObject(data).toString());
         }
-
-
-
         return lista;
     }
 

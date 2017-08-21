@@ -78,12 +78,15 @@ public class SupportSSL extends Thread {
             switch (message_type){
                 case "LoginRequest" : return LoginRequest(message);
                 case "GetBasicData" : return GetBasicData();
-                case "UpdateClientData" : return UpdateClientData(message);
+                case "ChangeData" : return ChangeData(message);
                 case "RegisterNewClient" : return RegisterNewClient(message);
                 case "AddDevice" : return  AddDevice(message);
                 case "TrainingProposition" : return  TrainingProposition(message);
                 case "GetTraining" : return GetTraining(message);
                 case "ExerciseReplacement" : return ExerciseReplacement(message);
+                case "InsertParameters" : return InsertParameters(message);
+                case "GetParameters" : return GetParameters(message);
+                case "ChangePassword" : return ChangePassword(message);
                 default : return GetErrorJSON("WrongMessageType");
             }
         } catch (JSONException|SQLException| MessagingException| ClassNotFoundException e) {
@@ -158,8 +161,10 @@ public class SupportSSL extends Thread {
             if(!rs.next()){return GetErrorJSON("ServerError"); }
             Map<String, String> data = new LinkedHashMap<>();
             data.put("message_type", "GetBasicData");
-            data.put("Name", rs.getString("NAME"));
-            data.put("Lastname",  rs.getString("LASTNAME"));
+            data.put("name", rs.getString("NAME"));
+            data.put("last_name",  rs.getString("LASTNAME"));
+            data.put("phone",  rs.getString("PHONE"));
+            data.put("email",  rs.getString("EMAIL"));
             return new JSONObject(data);
     }
 
@@ -179,21 +184,71 @@ public class SupportSSL extends Thread {
         return new JSONObject(data);
     }
 
-    private JSONObject UpdateClientData(JSONObject message) throws JSONException, SQLException, ClassNotFoundException {
+    private JSONObject ChangeData(JSONObject message) throws JSONException, SQLException, ClassNotFoundException {
             if(USER_ID==-1){return GetErrorJSON("NotLogged");}
             String imie = message.getString("name");
-            String nazwisko = message.getString("lastname");
-            fasade.UpdateData(imie, nazwisko, USER_ID);
+            String nazwisko = message.getString("last_name");
+            int phone = message.getInt("phone");
+            String email = message.getString("email");
+
+            fasade.UpdateData(imie, nazwisko, phone, email, USER_ID);
             Map<String, String> data = new LinkedHashMap<>();
-            data.put("message_type", "UpdateClientData");
+            data.put("message_type", "ChangeData");
             return new JSONObject(data);
     }
+
+
+    private JSONObject InsertParameters(JSONObject message)throws JSONException, SQLException, ClassNotFoundException {
+        if(USER_ID==-1){return GetErrorJSON("NotLogged");}
+        Map<String, String> data = new LinkedHashMap<>();
+        data.put("message_type", "InsertParameters");
+        int age =  message.getInt("AGE");
+        int weight  =  message.getInt("WEIGHT");
+        int height  =  message.getInt("HEIGHT");
+        String frequency =  message.getString("FREQUENCY");
+        String advancement_level =  message.getString("ADVANCEMENT_LEVEL");
+        String goal =  message.getString("GOAL");
+
+        fasade.InsertParameters(USER_ID, age, height, weight, frequency, advancement_level, goal);
+        return new JSONObject(data);
+    }
+
+    private JSONObject GetParameters(JSONObject message)throws JSONException, SQLException{
+        if(USER_ID==-1){return GetErrorJSON("NotLogged");}
+        Map<String, String> data = new LinkedHashMap<>();
+        data.put("message_type", "GetParameters");
+        ResultSet rs = fasade.GetParamenters(USER_ID);
+        rs.next();
+        data.put("age",rs.getString("AGE"));
+        data.put("weight",rs.getString("WEIGHT"));
+        data.put("height",rs.getString("HEIGHT"));
+        data.put("frequency",rs.getString("FRAQUENCY"));
+        data.put("advancement_level",rs.getString("ADVANCEMENT_LEVEL"));
+        data.put("goal",rs.getString("GOAL"));
+
+        return new JSONObject(data);
+    }
+
+    private JSONObject ChangePassword(JSONObject message)throws JSONException, SQLException{
+        if(USER_ID==-1){return GetErrorJSON("NotLogged");}
+        Map<String, String> data = new LinkedHashMap<>();
+        data.put("message_type", "ChangePassword");
+
+        String old_password = message.getString("new_password ");
+        String new_password = message.getString("old_password ");
+
+        fasade.ChangePassword(USER_ID, new_password, old_password);
+
+        return new JSONObject(data);
+
+    }
+
 
     private JSONObject TrainingProposition(JSONObject message) throws JSONException, SQLException, ClassNotFoundException {
         if(USER_ID==-1){return GetErrorJSON("NotLogged");}
         Map<String, String> data = new LinkedHashMap<>();
         data.put("message_type", "TrainingProposition");
-        data.put("trainings ",fasade.GetRTrainingProposition(USER_ID).toString());
+        data.put("trainings",fasade.GetRTrainingProposition(USER_ID).toString());
         return new JSONObject(data);
     }
 
@@ -201,7 +256,7 @@ public class SupportSSL extends Thread {
         if(USER_ID==-1){return GetErrorJSON("NotLogged");}
         Map<String, String> data = new LinkedHashMap<>();
         data.put("message_type", "GetTraining");
-        data.put("exercises ",fasade.GetTrainingExercises(message.getInt("training_id")).toString());
+        data.put("exercises",fasade.GetTrainingExercises(message.getInt("training_id")).toString());
         return new JSONObject(data);
     }
 

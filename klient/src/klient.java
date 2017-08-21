@@ -1,5 +1,6 @@
 
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import java.util.Scanner;
@@ -101,7 +102,6 @@ class Klient_reciver {
         data.put("message_type", "GetTraining");
         data.put("training_id", Integer.toString(training_id));
         data.put("start_training", Boolean.toString(start));
-
         return reciver(data);
     }
 
