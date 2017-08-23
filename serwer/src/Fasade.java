@@ -40,6 +40,16 @@ public class Fasade {
         if (rs.next())return true;
         return false;
     }
+    //"SELECT MAX(USER_ID) FROM `user_data`"
+
+    public int GetHighestUserId() throws SQLException {
+        Connection connection = connectionPool.getConnection();
+        Statement stmt = connection.createStatement();
+        String sql = "SELECT MAX(USER_ID) FROM user_data";
+        ResultSet rs = stmt.executeQuery(sql);
+        rs.next();
+        return rs.getInt("MAX(USER_ID)");
+    }
 
     public int SendVerifyCode(String user_id) throws SQLException, MessagingException {
         Connection connection = connectionPool.getConnection();
@@ -126,7 +136,7 @@ public class Fasade {
     public void InsertParameters(int user_id, int age, int height, int weight, String fraquency, String advancement_level , String goal) throws SQLException {
         Connection connection = connectionPool.getConnection();
         Statement stmt = connection.createStatement();
-        String sql = String.format("INSERT INTO `user_parameters` (`USER_ID`, `AGE`, `HEIGH`, `WEIGH`, `FRAQUENCY`, `ADVANCMENT_LEVEL`, `GOAL`, `DATA_DODANIA`) VALUES ('%s', '%s', '%s', '%s', '%s', '%s', '%s', CURRENT_TIMESTAMP)",
+        String sql = String.format("INSERT INTO `user_parameters` (`USER_ID`, `AGE`, `HEIGHT`, `WEIGHT`, `FRAQUENCY`, `ADVANCMENT_LEVEL`, `GOAL`, `DATA_DODANIA`) VALUES ('%s', '%s', '%s', '%s', '%s', '%s', '%s', CURRENT_TIMESTAMP)",
                 user_id, age, height, weight, fraquency, advancement_level, goal);
         stmt.executeUpdate(sql);
         connectionPool.releaseConnection(connection);
@@ -141,7 +151,7 @@ public class Fasade {
         return rs;
     }
 
-    public void ChangePassword(int user_id, String new_password, String old_password)throws SQLException{
+    public void ChangePassword(int user_id, String old_password, String new_password)throws SQLException{
         Connection connection = connectionPool.getConnection();
         Statement stmt = connection.createStatement();
         String OLDPASS = hashString(old_password);

@@ -84,7 +84,7 @@ class Klient_reciver {
         return reciver(data);
     }
 
-    public JSONObject Register(String login, String password, String name, String lastname, String email, int phone, String verify_way) throws IOException, JSONException {
+    public JSONObject Register(String login, String password, String name, String lastname, String email, int phone, String verify_way, int age,int weight, int height, String goal, String frequency,String advancment_level) throws IOException, JSONException {
         Map<String, String> data = new LinkedHashMap<>();
         data.put("message_type", "RegisterNewClient");
         data.put("login", login);
@@ -94,6 +94,12 @@ class Klient_reciver {
         data.put("PHONE",Integer.toString(phone));
         data.put("EMAIL",email);
         data.put("verify_way",verify_way);
+        data.put("age", Integer.toString(age));
+        data.put("weight", Integer.toString(weight));
+        data.put("height", Integer.toString(height));
+        data.put("frequency", frequency);
+        data.put("advancment_level", advancment_level);
+        data.put("goal", goal);
         return reciver(data);
     }
 
@@ -112,6 +118,42 @@ class Klient_reciver {
         data.put("id_replacment_group", Integer.toString(id_replacment_group));
         return reciver(data);
     }
+
+    public JSONObject GetParameters() throws IOException, JSONException {
+        Map<String, String> data = new LinkedHashMap<>();
+        data.put("message_type", "GetParameters");
+        return reciver(data);
+    }
+
+    public JSONObject InsertParameters(int age, int weight, int height, String frequency, String advancement_level, String goal) throws IOException, JSONException {
+        Map<String, String> data = new LinkedHashMap<>();
+        data.put("message_type", "InsertParameters");
+        data.put("age", Integer.toString(age));
+        data.put("weight", Integer.toString(weight));
+        data.put("height", Integer.toString(height));
+        data.put("frequency", frequency);
+        data.put("advancment_level", advancement_level);
+        data.put("goal", goal);
+        return reciver(data);
+    }
+    public JSONObject ChangeData(String name, String last_name, String email, int phone) throws IOException, JSONException {
+        Map<String, String> data = new LinkedHashMap<>();
+        data.put("message_type", "ChangeData");
+        data.put("phone", Integer.toString(phone));
+        data.put("last_name", last_name);
+        data.put("name", name);
+        data.put("email", email);
+        return reciver(data);
+    }
+
+    public JSONObject ChangePassword(String new_password, String old_password) throws IOException, JSONException {
+        Map<String, String> data = new LinkedHashMap<>();
+        data.put("message_type", "ChangePassword");
+        data.put("new_password", new_password);
+        data.put("old_password", old_password);
+        return reciver(data);
+    }
+
     public String JsonToString(JSONObject jsonObject) throws JSONException {
         String result = "";
         Iterator<?> keys = jsonObject.keys();
@@ -143,17 +185,28 @@ class main{
         boolean start = false;
         int exercise_id = 0;
         int id_replacement_group = 0;
-
+        int age = 0;
+        int weight = 0;
+        int height = 0;
+        String advancment_level = "";
+        String goal = "";
+        String frequency = "";
+        String old_password = "";
+        String new_password = "";
 
         while(true){
             System.out.println("Wybierz akcje");
-            System.out.println("1. Login");
-            System.out.println("2. Register");
-            System.out.println("3. Get user data");
-            System.out.println("4. Training Propositions");
-            System.out.println("5. Get and Start Training");
-            System.out.println("6. Add device");
-            System.out.println("7. Exercise Replacement");
+            System.out.println("1.  Login");
+            System.out.println("2.  Register");
+            System.out.println("3.  Get user data");
+            System.out.println("4.  Training Propositions");
+            System.out.println("5.  Get and Start Training");
+            System.out.println("6.  Add device");
+            System.out.println("7.  Exercise Replacement");
+            System.out.println("8.  Get user parameters");
+            System.out.println("9.  Add user parameters");
+            System.out.println("10. Updata user data ");
+            System.out.println("11. Change password");
 
 
 
@@ -183,7 +236,19 @@ class main{
                     phone = scanner.nextInt();
                     System.out.println("Sposob weryfikacji : ");
                     verify_way = scanner.next();
-                    klient_reciver.Register(login, password, name, lastname, email, phone, verify_way);
+                    System.out.println("Age : ");
+                    age = scanner.nextInt();
+                    System.out.println("Weight : ");
+                    weight = scanner.nextInt();
+                    System.out.println("Height : ");
+                    height = scanner.nextInt();
+                    System.out.println("Goal : ");
+                    goal = scanner.next();
+                    System.out.println("Frequency : ");
+                    frequency = scanner.next();
+                    System.out.println("Advancment_level : ");
+                    advancment_level = scanner.next();
+                    klient_reciver.Register(login, password, name, lastname, email, phone, verify_way, age, weight, height, goal, frequency, advancment_level);
                     break;
 
                 case "3":
@@ -215,7 +280,43 @@ class main{
                     System.out.println("Id grupy : ");
                     id_replacement_group = scanner.nextInt();
                     klient_reciver.ExerciseReplacement(exercise_id, id_replacement_group);
-
+                    break;
+                case "8":
+                    klient_reciver.GetParameters();
+                    break;
+                case "9":
+                    System.out.println("Age : ");
+                    age = scanner.nextInt();
+                    System.out.println("Weight : ");
+                    weight = scanner.nextInt();
+                    System.out.println("Height : ");
+                    height = scanner.nextInt();
+                    System.out.println("Goal : ");
+                    goal = scanner.next();
+                    System.out.println("Frequency : ");
+                    frequency = scanner.next();
+                    System.out.println("Advancment_level : ");
+                    advancment_level = scanner.next();
+                    klient_reciver.InsertParameters(age, weight, height, frequency, advancment_level, goal);
+                    break;
+                case "10":
+                    System.out.println("Name : ");
+                    name = scanner.next();
+                    System.out.println("Last name : ");
+                    lastname = scanner.next();
+                    System.out.println("Email : ");
+                    email = scanner.next();
+                    System.out.println("Phone : ");
+                    phone = scanner.nextInt();
+                    klient_reciver.ChangeData(name, lastname , email, phone);
+                    break;
+                case "11":
+                    System.out.println("New_password : ");
+                    new_password = scanner.next();
+                    System.out.println("Old_password : ");
+                    old_password = scanner.next();
+                    klient_reciver.ChangePassword(new_password, old_password);
+                    break;
             }
 
         }

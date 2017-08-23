@@ -178,7 +178,15 @@ public class SupportSSL extends Thread {
         String email = message.getString("EMAIL");
         int phone = message.getInt("PHONE");
         String verify_way = message.getString("verify_way");
+        int age =  message.getInt("age");
+        int weight  =  message.getInt("weight");
+        int height  =  message.getInt("height");
+        String frequency =  message.getString("frequency");
+        String advancement_level =  message.getString("advancment_level");
+        String goal =  message.getString("goal");
         if (!fasade.Register(login, password, imie, nazwisko, email, phone, verify_way)) {return GetErrorJSON("LoginTaken");}
+        USER_ID = fasade.GetHighestUserId();
+        fasade.InsertParameters(USER_ID, age, height, weight, frequency, advancement_level, goal);
         Map<String, String> data = new LinkedHashMap<>();
         data.put("message_type", "RegisterNewClient");
         return new JSONObject(data);
@@ -202,12 +210,12 @@ public class SupportSSL extends Thread {
         if(USER_ID==-1){return GetErrorJSON("NotLogged");}
         Map<String, String> data = new LinkedHashMap<>();
         data.put("message_type", "InsertParameters");
-        int age =  message.getInt("AGE");
-        int weight  =  message.getInt("WEIGHT");
-        int height  =  message.getInt("HEIGHT");
-        String frequency =  message.getString("FREQUENCY");
-        String advancement_level =  message.getString("ADVANCEMENT_LEVEL");
-        String goal =  message.getString("GOAL");
+        int age =  message.getInt("age");
+        int weight  =  message.getInt("weight");
+        int height  =  message.getInt("height");
+        String frequency =  message.getString("frequency");
+        String advancement_level =  message.getString("advancment_level");
+        String goal =  message.getString("goal");
 
         fasade.InsertParameters(USER_ID, age, height, weight, frequency, advancement_level, goal);
         return new JSONObject(data);
@@ -223,7 +231,7 @@ public class SupportSSL extends Thread {
         data.put("weight",rs.getString("WEIGHT"));
         data.put("height",rs.getString("HEIGHT"));
         data.put("frequency",rs.getString("FRAQUENCY"));
-        data.put("advancement_level",rs.getString("ADVANCEMENT_LEVEL"));
+        data.put("advancement_level",rs.getString("ADVANCMENT_LEVEL"));
         data.put("goal",rs.getString("GOAL"));
 
         return new JSONObject(data);
@@ -234,8 +242,8 @@ public class SupportSSL extends Thread {
         Map<String, String> data = new LinkedHashMap<>();
         data.put("message_type", "ChangePassword");
 
-        String old_password = message.getString("new_password ");
-        String new_password = message.getString("old_password ");
+        String old_password = message.getString("new_password");
+        String new_password = message.getString("old_password");
 
         fasade.ChangePassword(USER_ID, new_password, old_password);
 
