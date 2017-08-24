@@ -12,8 +12,8 @@ public class SSLConnector {
     protected SSLConnector(){
         SSLSocketFactory sslsocketfactory = (SSLSocketFactory)SSLSocketFactory.getDefault();
         try {
-            //sslsocket = (SSLSocket)sslsocketfactory.createSocket("188.116.11.90", 7632);
-            sslsocket = (SSLSocket)sslsocketfactory.createSocket("localhost", 7632);
+            sslsocket = (SSLSocket)sslsocketfactory.createSocket("188.116.11.90", 7632);
+            //sslsocket = (SSLSocket)sslsocketfactory.createSocket("localhost", 7632);
         } catch (Exception e) {
 
             System.out.println(e.toString());

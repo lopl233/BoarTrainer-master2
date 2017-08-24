@@ -1,25 +1,12 @@
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.sql.*;
-
-
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import javax.mail.Message;
 import javax.mail.MessagingException;
-import javax.mail.Session;
-import javax.mail.Transport;
-import javax.mail.internet.AddressException;
-import javax.mail.internet.InternetAddress;
-import javax.mail.internet.MimeMessage;
 import javax.net.ssl.SSLSocket;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
-import java.net.SocketException;
-import java.sql.DriverManager;
 import java.util.*;
 
 public class SupportSSL extends Thread {
@@ -27,15 +14,10 @@ public class SupportSSL extends Thread {
     private Fasade fasade = new Fasade();
     private int USER_ID = -1;
     private int AUTH_CODE=-1;
-    private int AUTH_CODE_OWNER_ID=-1;
 
     public SupportSSL(SSLSocket sslsocket) {
         super("SupportSSL");
         this.sslsocket = sslsocket;
-    }
-
-    public SupportSSL() {
-        super("SupportSSL");
     }
 
     @Override
@@ -55,23 +37,13 @@ public class SupportSSL extends Thread {
                         pw.println(GetErrorJSON("JSONPARSE"));
                         pw.flush();
                 }
-            } catch (SocketException ioe) {return;
             } catch (IOException ioe) {return;}
         }//koniec while'a
     }//koniec run'a
 
-    private Connection MakeConnection() throws SQLException, ClassNotFoundException {
-        Class.forName("com.mysql.jdbc.Driver");
-        String serverName = "localhost";
-        String mydatabase = "mydatabase";
-        String url = "jdbc:mysql://" + "localhost" + "/" + "dzik";
-        return DriverManager.getConnection(url, "root", "");
-
-
-    }
 
     private JSONObject CreateAnswer(JSONObject message){
-        String message_type="";
+        String message_type;
         try {
             message_type = message.getString("message_type");
 
@@ -81,11 +53,11 @@ public class SupportSSL extends Thread {
                 case "ChangeData" : return ChangeData(message);
                 case "RegisterNewClient" : return RegisterNewClient(message);
                 case "AddDevice" : return  AddDevice(message);
-                case "TrainingProposition" : return  TrainingProposition(message);
+                case "TrainingProposition" : return  TrainingProposition();
                 case "GetTraining" : return GetTraining(message);
                 case "ExerciseReplacement" : return ExerciseReplacement(message);
                 case "InsertParameters" : return InsertParameters(message);
-                case "GetParameters" : return GetParameters(message);
+                case "GetParameters" : return GetParameters();
                 case "ChangePassword" : return ChangePassword(message);
                 default : return GetErrorJSON("WrongMessageType");
             }
@@ -124,7 +96,6 @@ public class SupportSSL extends Thread {
                 return new JSONObject(data);}
 
             AUTH_CODE = fasade.SendVerifyCode(Integer.toString(temp_user_id));
-            AUTH_CODE_OWNER_ID = temp_user_id;
 
             Map<String, String> data = new LinkedHashMap<>();
             data.put("message_type", "LoginRequest");
@@ -170,7 +141,6 @@ public class SupportSSL extends Thread {
 
     private JSONObject RegisterNewClient(JSONObject message) throws SQLException, ClassNotFoundException, JSONException {
 
-        Connection connection = MakeConnection();
         String login = message.getString("login");
         String password = message.getString("password");
         String imie = message.getString("name");
@@ -221,7 +191,7 @@ public class SupportSSL extends Thread {
         return new JSONObject(data);
     }
 
-    private JSONObject GetParameters(JSONObject message)throws JSONException, SQLException{
+    private JSONObject GetParameters()throws JSONException, SQLException{
         if(USER_ID==-1){return GetErrorJSON("NotLogged");}
         Map<String, String> data = new LinkedHashMap<>();
         data.put("message_type", "GetParameters");
@@ -252,7 +222,7 @@ public class SupportSSL extends Thread {
     }
 
 
-    private JSONObject TrainingProposition(JSONObject message) throws JSONException, SQLException, ClassNotFoundException {
+    private JSONObject TrainingProposition() throws JSONException, SQLException, ClassNotFoundException {
         if(USER_ID==-1){return GetErrorJSON("NotLogged");}
         Map<String, String> data = new LinkedHashMap<>();
         data.put("message_type", "TrainingProposition");

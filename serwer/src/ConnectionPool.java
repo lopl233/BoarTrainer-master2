@@ -62,12 +62,12 @@ public class ConnectionPool {
         try {
             Class.forName("com.mysql.jdbc.Driver");
             for(int temp=0; temp<100; temp++)
-                freeConnections.add(DriverManager.getConnection("jdbc:mysql://localhost:3306/dzik?" +
+                freeConnections.add(DriverManager.getConnection("jdbc:mysql://localhost:3306/dzik2?" +
                         "useUnicode=true" +
                         "&useJDBCCompliantTimezoneShift=true" +
                         "&useLegacyDatetimeCode=false" +
-                        //"&serverTimezone=UTC","dbadmin", "password"));
-                        "&serverTimezone=UTC","root", ""));
+                        "&serverTimezone=UTC","dbadmin", "password"));
+                        //p"&serverTimezone=UTC","root", ""));
         }catch (SQLException|ClassNotFoundException e) {
             e.printStackTrace();
         }

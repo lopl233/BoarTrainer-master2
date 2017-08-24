@@ -1,6 +1,3 @@
-
-
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import java.util.Scanner;
@@ -11,7 +8,6 @@ import java.util.Map;
 
 
 class Klient_reciver {
-    public static boolean isLogged=false;
     private  SSLConnector sslConnector;
     private  PrintWriter pw;
     private  BufferedReader br;
@@ -29,7 +25,7 @@ class Klient_reciver {
         sslConnector = SSLConnector.getInstance();
         try {
             sslConnector.sslsocket.startHandshake();
-        } catch (IOException e) {}
+        } catch (IOException e) {System.out.println(e);}
         pw = new PrintWriter(sslConnector.sslsocket.getOutputStream());
         br = new BufferedReader(new InputStreamReader(sslConnector.sslsocket.getInputStream()));
 
@@ -154,7 +150,7 @@ class Klient_reciver {
         return reciver(data);
     }
 
-    public String JsonToString(JSONObject jsonObject) throws JSONException {
+    private String JsonToString(JSONObject jsonObject) throws JSONException {
         String result = "";
         Iterator<?> keys = jsonObject.keys();
         while( keys.hasNext() ) {
@@ -167,35 +163,36 @@ class Klient_reciver {
 }//koniec klasy klient_reciver
 
 
-class main{
-    public static Klient_reciver klient_reciver;
+class klient_ascii{
 
     public static void main(String[] args) throws IOException, JSONException {
-        klient_reciver = new Klient_reciver();
+        Klient_reciver klient_reciver = new Klient_reciver();
         Scanner scanner = new Scanner(System.in);
-        String choice = "";
-        String login = "";
-        String password = "";
-        String email = "";
-        String verify_way = "";
-        String name = "";
-        String lastname = "";
-        int phone = 0;
-        int training_id = 0;
-        boolean start = false;
-        int exercise_id = 0;
-        int id_replacement_group = 0;
-        int age = 0;
-        int weight = 0;
-        int height = 0;
-        String advancment_level = "";
-        String goal = "";
-        String frequency = "";
-        String old_password = "";
-        String new_password = "";
+        String choice;
+        String login;
+        String password;
+        String email;
+        String verify_way;
+        String name;
+        String lastname;
+        int phone;
+        int training_id;
+        boolean start;
+        int exercise_id;
+        int id_replacement_group;
+        int age;
+        int weight;
+        int height;
+        String advancment_level;
+        String goal;
+        String frequency;
+        String old_password;
+        String new_password;
+        boolean Continue = true;
 
-        while(true){
+        while(Continue){
             System.out.println("Wybierz akcje");
+            System.out.println("0.  Exit");
             System.out.println("1.  Login");
             System.out.println("2.  Register");
             System.out.println("3.  Get user data");
@@ -208,10 +205,11 @@ class main{
             System.out.println("10. Updata user data ");
             System.out.println("11. Change password");
 
-
-
             choice = scanner.next();
             switch (choice) {
+                case "0":
+                    Continue = false;
+                    break;
                 case "1":
                     System.out.println("Login : ");
                     login = scanner.next();
