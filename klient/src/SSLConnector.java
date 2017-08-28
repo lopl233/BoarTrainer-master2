@@ -1,6 +1,4 @@
 import javax.net.ssl.SSLSocket;
-import java.io.*;
-import java.io.InputStream;
 import javax.net.ssl.SSLSocketFactory;
 
 public class SSLConnector {
@@ -15,8 +13,6 @@ public class SSLConnector {
             sslsocket = (SSLSocket)sslsocketfactory.createSocket("188.116.11.90", 7632);
             //sslsocket = (SSLSocket)sslsocketfactory.createSocket("localhost", 7632);
         } catch (Exception e) {
-
-            System.out.println(e.toString());
             System.out.println("Connection refused");
         }
 

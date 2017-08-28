@@ -65,6 +65,14 @@ class Klient_reciver {
         data.put("message_type", "GetBasicData");
         return reciver(data);
     }
+
+    public JSONObject GetExerciseData(int exercise_id) throws IOException, JSONException {
+        Map<String, String> data = new LinkedHashMap<>();
+        data.put("message_type", "GetExercise");
+        data.put("exercise_id",Integer.toString(exercise_id));
+        return reciver(data);
+
+    }
     public JSONObject GetTrainingPropositions() throws IOException, JSONException {
         Map<String, String> data = new LinkedHashMap<>();
         data.put("message_type", "TrainingProposition");
@@ -204,6 +212,7 @@ class klient_ascii{
             System.out.println("9.  Add user parameters");
             System.out.println("10. Updata user data ");
             System.out.println("11. Change password");
+            System.out.println("12. Exercise data");
 
             choice = scanner.next();
             switch (choice) {
@@ -309,15 +318,21 @@ class klient_ascii{
                     klient_reciver.ChangeData(name, lastname , email, phone);
                     break;
                 case "11":
-                    System.out.println("New_password : ");
-                    new_password = scanner.next();
-                    System.out.println("Old_password : ");
-                    old_password = scanner.next();
-                    klient_reciver.ChangePassword(new_password, old_password);
+                System.out.println("New_password : ");
+                new_password = scanner.next();
+                System.out.println("Old_password : ");
+                old_password = scanner.next();
+                klient_reciver.ChangePassword(new_password, old_password);
+                break;
+                case "12":
+                    System.out.println("Exercise id : ");
+                    exercise_id = scanner.nextInt();
+                    klient_reciver.GetExerciseData(exercise_id);
                     break;
             }
-
         }
+
+
 
     }
 

@@ -67,7 +67,7 @@ public class ConnectionPool {
                         "&useJDBCCompliantTimezoneShift=true" +
                         "&useLegacyDatetimeCode=false" +
                         "&serverTimezone=UTC","dbadmin", "password"));
-                        //p"&serverTimezone=UTC","root", ""));
+                        //"&serverTimezone=UTC","root", ""));
         }catch (SQLException|ClassNotFoundException e) {
             e.printStackTrace();
         }

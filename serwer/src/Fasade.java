@@ -48,7 +48,16 @@ public class Fasade {
         String sql = "SELECT MAX(USER_ID) FROM user_data";
         ResultSet rs = stmt.executeQuery(sql);
         rs.next();
+        connectionPool.releaseConnection(connection);
         return rs.getInt("MAX(USER_ID)");
+    }
+    public ResultSet ExericeData(String exercise_id) throws SQLException {
+        Connection connection = connectionPool.getConnection();
+        Statement stmt = connection.createStatement();
+        String sql = String.format("SELECT * FROM `exercise` WHERE exercise_id = %s",exercise_id);
+        ResultSet rs = stmt.executeQuery(sql);
+        connectionPool.releaseConnection(connection);
+        return rs;
     }
 
     public int SendVerifyCode(String user_id) throws SQLException, MessagingException {

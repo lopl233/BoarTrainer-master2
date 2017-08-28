@@ -59,6 +59,7 @@ public class SupportSSL extends Thread {
                 case "InsertParameters" : return InsertParameters(message);
                 case "GetParameters" : return GetParameters();
                 case "ChangePassword" : return ChangePassword(message);
+                case "GetExercise" : return GetExercise(message);
                 default : return GetErrorJSON("WrongMessageType");
             }
         } catch (JSONException|SQLException| MessagingException| ClassNotFoundException e) {
@@ -222,7 +223,7 @@ public class SupportSSL extends Thread {
     }
 
 
-    private JSONObject TrainingProposition() throws JSONException, SQLException, ClassNotFoundException {
+    private JSONObject TrainingProposition() throws JSONException, SQLException {
         if(USER_ID==-1){return GetErrorJSON("NotLogged");}
         Map<String, String> data = new LinkedHashMap<>();
         data.put("message_type", "TrainingProposition");
@@ -230,7 +231,7 @@ public class SupportSSL extends Thread {
         return new JSONObject(data);
     }
 
-    private JSONObject GetTraining(JSONObject message) throws JSONException, SQLException, ClassNotFoundException {
+    private JSONObject GetTraining(JSONObject message) throws JSONException, SQLException {
         if(USER_ID==-1){return GetErrorJSON("NotLogged");}
         Map<String, String> data = new LinkedHashMap<>();
         data.put("message_type", "GetTraining");
@@ -238,11 +239,23 @@ public class SupportSSL extends Thread {
         return new JSONObject(data);
     }
 
-    private JSONObject ExerciseReplacement(JSONObject message) throws JSONException, SQLException, ClassNotFoundException {
+    private JSONObject ExerciseReplacement(JSONObject message) throws JSONException, SQLException {
         if(USER_ID==-1){return GetErrorJSON("NotLogged");}
         Map<String, String> data = new LinkedHashMap<>();
         data.put("message_type", "ExerciseReplacement");
         data.put("exercises ",fasade.ExerciseReplacement(message.getInt("exercise_id"),message.getInt("id_replacment_group") ).toString());
+        return new JSONObject(data);
+    }
+
+    private JSONObject GetExercise(JSONObject message) throws JSONException, SQLException {
+        if(USER_ID==-1){return GetErrorJSON("NotLogged");}
+        Map<String, String> data = new LinkedHashMap<>();
+        data.put("message_type", "GetExercise");
+        ResultSet rs = fasade.ExericeData(message.getString("exercise_id"));
+        rs.next();
+        data.put("description", rs.getString("description"));
+        data.put("video_link",  rs.getString("video_link"));
+        data.put("exercise_name",  rs.getString("exercise_name"));
         return new JSONObject(data);
     }
 
