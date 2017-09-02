@@ -1,3 +1,5 @@
+package algo;
+
 import org.json.JSONObject;
 
 import javax.mail.Message;
@@ -278,13 +280,25 @@ public class Fasade {
         return lista;
     }
 
-    public static void main(String[] args) throws SQLException {
-        Fasade fasade = new Fasade();
-        List <String> lista = fasade.ExerciseReplacement(1,1);
-        for (String x: lista) {
-            System.out.println(x);
+    public  ArrayList<Plan_Search.Plan_compare> Calculate(String age, int Height, int Weight, String Fraquency, String Advancement_level, String goal ) throws SQLException {
+        ArrayList<Plan_Search.Plan_compare> result = new ArrayList<>();
+        Connection connection = ConnectionPool.getInstance().getConnection();
+        Statement stmt = connection.createStatement();
+        String sql = "SELECT * FROM  `plans` ";
+        ResultSet rs = stmt.executeQuery(sql);
+        ConnectionPool.getInstance().releaseConnection(connection);
+
+        ArrayList<Plan_Search> temp = new ArrayList<>();
+        while (rs.next())
+            temp.add(new Plan_Search(rs.getString("plan_name"),rs.getInt("plan_id"),age, "150-159", "75-89", Fraquency, Advancement_level, goal ));
+
+        for (Plan_Search tmp : temp
+             ) {
+            result.add(tmp.plan_compare);
         }
-        System.exit(0);
+
+        Collections.sort(result, (Plan_Search.Plan_compare a,Plan_Search.Plan_compare b) -> a.percent - b.percent);
+        return result;
     }
 
 

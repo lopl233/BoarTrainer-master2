@@ -1,4 +1,4 @@
-import java.sql.Connection;
+import algo.ConnectionPool;
 
 public class serwer{
 

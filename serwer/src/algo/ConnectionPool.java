@@ -1,3 +1,4 @@
+package algo;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -62,12 +63,12 @@ public class ConnectionPool {
         try {
             Class.forName("com.mysql.jdbc.Driver");
             for(int temp=0; temp<100; temp++)
-                freeConnections.add(DriverManager.getConnection("jdbc:mysql://localhost:3306/dzik2?" +
+                freeConnections.add(DriverManager.getConnection("jdbc:mysql://localhost:3306/dzik?" +
                         "useUnicode=true" +
                         "&useJDBCCompliantTimezoneShift=true" +
                         "&useLegacyDatetimeCode=false" +
-                        "&serverTimezone=UTC","dbadmin", "password"));
-                        //"&serverTimezone=UTC","root", ""));
+                      //  "&serverTimezone=UTC","dbadmin", "password"));
+                        "&serverTimezone=UTC","root", ""));
         }catch (SQLException|ClassNotFoundException e) {
             e.printStackTrace();
         }
