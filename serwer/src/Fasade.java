@@ -1,5 +1,3 @@
-package algo;
-
 import org.json.JSONObject;
 
 import javax.mail.Message;
@@ -172,6 +170,49 @@ public class Fasade {
         connectionPool.releaseConnection(connection);
     }
 
+    public void startPlan(int user_id, int plan_id) throws SQLException {
+        Connection connection = connectionPool.getConnection();
+        Statement stmt = connection.createStatement();
+        String sql = String.format("UPDATE `plan_history` SET `end_date`= CURRENT_TIMESTAMP WHERE end_date is NULL and user_id = %s", Integer.toString(user_id));
+        stmt.executeUpdate(sql);
+
+        stmt = connection.createStatement();
+        sql = String.format("INSERT INTO `plan_history` (`user_id`, `plan_id`, `start_date`, `end_date`) VALUES ('%s', '%s', CURRENT_TIMESTAMP, NULL);", Integer.toString(user_id),Integer.toString(plan_id));
+        stmt.executeUpdate(sql);
+
+        connectionPool.releaseConnection(connection);
+
+    }
+
+
+    public ArrayList<Plan_Search.Plan_compare> getPlanForUseR(int user_id) throws SQLException {
+        User_params user_params = getUserParams(user_id);
+        return Calculate(user_params.age, user_params.height, user_params.weight, user_params.fraquency, user_params.Advancement_level, user_params.goal);
+    }
+
+    User_params getUserParams(int user_id) throws SQLException {
+        User_params user_params;
+
+        Connection connection = connectionPool.getConnection();
+        Statement stmt = connection.createStatement();
+        String sql = String.format("SELECT * FROM `user_parameters` WHERE user_id = %s order by DATA_DODANIA DESC LIMIT 1",Integer.toString(user_id ));
+        ResultSet rs = stmt.executeQuery(sql);
+        connectionPool.releaseConnection(connection);
+
+        rs.next();
+        int age = rs.getInt("AGE");
+        int height = rs.getInt("HEIGHT");
+        int weight = rs.getInt("WEIGHT");
+        String fraquency = rs.getString("FRAQUENCY");
+        String Advancement_level = rs.getString("ADVANCMENT_LEVEL");
+        String goal = rs.getString("GOAL");
+
+        user_params = new User_params(age, height, weight, fraquency, Advancement_level, goal);
+        return user_params;
+    }
+
+
+
     public String hashString(String s) {
         byte[] hash = null;
 
@@ -280,7 +321,7 @@ public class Fasade {
         return lista;
     }
 
-    public  ArrayList<Plan_Search.Plan_compare> Calculate(String age, int Height, int Weight, String Fraquency, String Advancement_level, String goal ) throws SQLException {
+    public  ArrayList<Plan_Search.Plan_compare> Calculate(int age, int Height, int Weight, String Fraquency, String Advancement_level, String goal ) throws SQLException {
         ArrayList<Plan_Search.Plan_compare> result = new ArrayList<>();
         Connection connection = ConnectionPool.getInstance().getConnection();
         Statement stmt = connection.createStatement();
@@ -288,16 +329,51 @@ public class Fasade {
         ResultSet rs = stmt.executeQuery(sql);
         ConnectionPool.getInstance().releaseConnection(connection);
 
+        String age_string = "";
+        String height_string = "";
+        String weight_string = "";
+
+        if(age <= 16){age_string = "12-15";}
+        else  if(age <= 16){age_string = "12-15";}
+        else  if(age <= 19){age_string = "16-19";}
+        else  if(age <= 29){age_string = "20-29";}
+        else  if(age <= 44){age_string = "30-44";}
+        else  if(age <= 69){age_string = "45-69";}
+        else {age_string = "70-";}
+
+        if(Height <= 119){height_string = "-119";}
+        else  if(Height <= 129){height_string = "120-129";}
+        else  if(Height <= 144){height_string = "130-144";}
+        else  if(Height <= 159){height_string = "145-159";}
+        else  if(Height <= 179){height_string = "160-179";}
+        else  if(Height <= 194){height_string = "180-194";}
+        else {height_string = "195-";}
+
+        if(Weight <= 39){weight_string = "-39";}
+        else  if(Weight <= 54){weight_string = "40-54";}
+        else  if(Weight <= 69){weight_string = "55-69";}
+        else  if(Weight <= 84){weight_string = "70-84";}
+        else  if(Weight <= 109){weight_string = "85-109";}
+        else {weight_string = "110-";}
+
+
+
         ArrayList<Plan_Search> temp = new ArrayList<>();
         while (rs.next())
-            temp.add(new Plan_Search(rs.getString("plan_name"),rs.getInt("plan_id"),age, "150-159", "75-89", Fraquency, Advancement_level, goal ));
+            temp.add(new Plan_Search(rs.getString("plan_name"),rs.getInt("plan_id"), age_string, height_string, weight_string, Fraquency, Advancement_level, goal ));
 
         for (Plan_Search tmp : temp
              ) {
             result.add(tmp.plan_compare);
         }
+        Collections.sort(result, (Plan_Search.Plan_compare a,Plan_Search.Plan_compare b) -> b.percent - a.percent);
 
-        Collections.sort(result, (Plan_Search.Plan_compare a,Plan_Search.Plan_compare b) -> a.percent - b.percent);
+        double temp_max_val = (double) result.get(0).percent;
+
+        for (Plan_Search.Plan_compare tmp :result
+             ) {
+            tmp.percent = (int)((double)tmp.percent * 100.0 / temp_max_val);
+        }
         return result;
     }
 

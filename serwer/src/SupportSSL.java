@@ -1,6 +1,5 @@
 import java.sql.*;
 
-import algo.Fasade;
 import org.json.JSONException;
 import org.json.JSONObject;
 import javax.mail.MessagingException;

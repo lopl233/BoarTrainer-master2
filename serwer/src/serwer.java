@@ -1,5 +1,3 @@
-import algo.ConnectionPool;
-
 public class serwer{
 
     public static void main(String[] args)  {
