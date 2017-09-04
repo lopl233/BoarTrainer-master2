@@ -127,10 +127,12 @@ public class Fasade {
         rs = stmt.executeQuery(sql);
         rs.next();
         String User_ID = rs.getString("USER_ID");
+        int user_id = Integer.parseInt(User_ID);
         sql = "INSERT INTO `user_data` (`USER_ID`, `NAME`, `LASTNAME`, `EMAIL`, `PHONE`) VALUES ('"
                 +User_ID+"', '"+imie+"', '"+nazwisko+"','"+email+"',"+phone+")";
         stmt.executeUpdate(sql);
         connectionPool.releaseConnection(connection);
+
         return true;
     }
     public void UpdateData(String imie, String nazwisko, int phone, String email, int user_id) throws SQLException {
@@ -265,7 +267,7 @@ public class Fasade {
     private void SendSMS(int number,int kod){return;}//koniec funkcji wysylania maila
 
 
-    public List<String> GetTrainingExercises(int training_id) throws SQLException {
+    public List<String> GetTrainingExercises(int training_id, boolean start, int user_id) throws SQLException {
         List<String> lista = new ArrayList<>();
         Connection connection = connectionPool.getConnection();
         Statement stmt = connection.createStatement();
@@ -284,6 +286,7 @@ public class Fasade {
             data.put("reps", rs.getString("reps"));
             lista.add(new JSONObject(data).toString());
         }
+        if(start)StartTraining(user_id, training_id);
 
         return lista;
     }
@@ -356,26 +359,48 @@ public class Fasade {
         else  if(Weight <= 109){weight_string = "85-109";}
         else {weight_string = "110-";}
 
-
-
         ArrayList<Plan_Search> temp = new ArrayList<>();
         while (rs.next())
             temp.add(new Plan_Search(rs.getString("plan_name"),rs.getInt("plan_id"), age_string, height_string, weight_string, Fraquency, Advancement_level, goal ));
 
-        for (Plan_Search tmp : temp
-             ) {
-            result.add(tmp.plan_compare);
-        }
+        for (Plan_Search tmp : temp) {result.add(tmp.plan_compare);}
         Collections.sort(result, (Plan_Search.Plan_compare a,Plan_Search.Plan_compare b) -> b.percent - a.percent);
-
         double temp_max_val = (double) result.get(0).percent;
-
-        for (Plan_Search.Plan_compare tmp :result
-             ) {
-            tmp.percent = (int)((double)tmp.percent * 100.0 / temp_max_val);
-        }
+        for (Plan_Search.Plan_compare tmp :result) {tmp.percent = (int)((double)tmp.percent * 100.0 / temp_max_val);}
         return result;
     }
 
+    public int GetPlanName(int user_id) throws SQLException {
+        Connection connection = connectionPool.getConnection();
+        Statement stmt = connection.createStatement();
+        String sql = String.format("SELECT * FROM `plan_history` WHERE user_id = %s AND end_date is NULL", Integer.toString(user_id));
+        ResultSet rs = stmt.executeQuery(sql);
+        connectionPool.releaseConnection(connection);
+        rs.next();
+        return rs.getInt("plan_id");
+    }
+
+    public void StartTraining(int user_id, int training_id) throws SQLException {
+        String sql_add = String.format(
+                "INSERT INTO `training_sessions` (`user_id`, `training_id`, `data`, `is_finished`) VALUES ('%s', '%s', CURRENT_TIME(), '0')"
+                ,Integer.toString(user_id),Integer.toString(training_id));
+        String sql_dell = String.format("DELETE FROM `training_sessions` WHERE user_id = %s and is_finished = 0",Integer.toString(user_id));
+        Connection connection = connectionPool.getConnection();
+        Statement stmt = connection.createStatement();
+        stmt.executeUpdate(sql_dell);
+        stmt = connection.createStatement();
+        stmt.executeUpdate(sql_add);
+        connectionPool.releaseConnection(connection);
+    }
+
+    public void EndTraining(int user_id, String when) throws SQLException {
+        Connection connection = connectionPool.getConnection();
+        Statement stmt = connection.createStatement();
+        String sql;
+        if(when.equals("now")){{sql= String.format("UPDATE `training_sessions` SET  `is_finished`= 1  WHERE user_id = %s", Integer.toString(user_id));}}
+        else {sql= String.format("UPDATE `training_sessions` SET  `is_finished`= 1 , data = CURRENT_DATE WHERE user_id = %s", Integer.toString(user_id));}
+        stmt.executeUpdate(sql);
+        connectionPool.releaseConnection(connection);
+    }
 
 }

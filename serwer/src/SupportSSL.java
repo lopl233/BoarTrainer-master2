@@ -61,6 +61,9 @@ public class SupportSSL extends Thread {
                 case "GetParameters" : return GetParameters();
                 case "ChangePassword" : return ChangePassword(message);
                 case "GetExercise" : return GetExercise(message);
+                case "GetPlanPropositions" : return GetPlanPropositions(message);
+                case "StartPlan" : return StartPlan (message);
+                case "EndTraining" : return EndTraining (message);
                 default : return GetErrorJSON("WrongMessageType");
             }
         } catch (JSONException|SQLException| MessagingException| ClassNotFoundException e) {
@@ -159,8 +162,13 @@ public class SupportSSL extends Thread {
         if (!fasade.Register(login, password, imie, nazwisko, email, phone, verify_way)) {return GetErrorJSON("LoginTaken");}
         USER_ID = fasade.GetHighestUserId();
         fasade.InsertParameters(USER_ID, age, height, weight, frequency, advancement_level, goal);
+
+        Plan_Search.Plan_compare  temp =   fasade.getPlanForUseR(USER_ID).get(0);
+        fasade.startPlan(USER_ID,temp.id);
+
         Map<String, String> data = new LinkedHashMap<>();
         data.put("message_type", "RegisterNewClient");
+        data.put("plan", temp.name);
         return new JSONObject(data);
     }
 
@@ -236,7 +244,9 @@ public class SupportSSL extends Thread {
         if(USER_ID==-1){return GetErrorJSON("NotLogged");}
         Map<String, String> data = new LinkedHashMap<>();
         data.put("message_type", "GetTraining");
-        data.put("exercises",fasade.GetTrainingExercises(message.getInt("training_id")).toString());
+        int training_id = message.getInt("training_id");
+        boolean start = message.getBoolean("start_training");
+        data.put("exercises",fasade.GetTrainingExercises(training_id, start, USER_ID).toString());
         return new JSONObject(data);
     }
 
@@ -260,5 +270,39 @@ public class SupportSSL extends Thread {
         return new JSONObject(data);
     }
 
+    private JSONObject GetPlanPropositions(JSONObject message) throws SQLException {
+        if(USER_ID==-1){return GetErrorJSON("NotLogged");}
+        Map<String, String> data = new LinkedHashMap<>();
+        ArrayList<Plan_Search.Plan_compare> lista = fasade.getPlanForUseR(USER_ID);
+        data.put("message_type", "GetPlanPropositions");
+        data.put("plans", lista.toString());
+        return new JSONObject(data);
+    }
+
+    private JSONObject StartPlan(JSONObject message) throws JSONException, SQLException {
+        if(USER_ID==-1){return GetErrorJSON("NotLogged");}
+        Map<String, String> data = new LinkedHashMap<>();
+        data.put("message_type", "StartPlan");
+        fasade.startPlan(USER_ID,message.getInt("plan_id") );
+        return new JSONObject(data);
+    }
+
+    private JSONObject GetCurrentPlan(JSONObject message) throws SQLException {
+        if(USER_ID==-1){return GetErrorJSON("NotLogged");}
+        Map<String, String> data = new LinkedHashMap<>();
+        data.put("message_type", "GetCurrentPlan");
+        data.put("plan_id", Integer.toString(fasade.GetPlanName(USER_ID)));
+        return new JSONObject(data);
+    }
+
+
+    private JSONObject EndTraining(JSONObject message) throws JSONException, SQLException {
+        if(USER_ID==-1){return GetErrorJSON("NotLogged");}
+        Map<String, String> data = new LinkedHashMap<>();
+        data.put("message_type", "EndTraining");
+        String when = message.getString("when");
+        fasade.EndTraining(USER_ID, when);
+        return new JSONObject(data);
+    }
 
 }

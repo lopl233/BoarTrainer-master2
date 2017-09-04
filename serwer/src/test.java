@@ -4,7 +4,7 @@ public class test {
 
     public static void main(String[] args) throws SQLException {
 
-        new Fasade().startPlan(28,3);
+        new Fasade().StartTraining(3, 11);
         System.exit(0);
     }
 }

@@ -8,7 +8,7 @@ public class Plan_Search {
         public int percent;
         int id;
         public String toString(){
-            return name + " " + percent;
+            return id + "|" + name + "|" + percent;
         }
     }
 
