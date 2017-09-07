@@ -64,6 +64,7 @@ public class SupportSSL extends Thread {
                 case "GetPlanPropositions" : return GetPlanPropositions(message);
                 case "StartPlan" : return StartPlan (message);
                 case "EndTraining" : return EndTraining (message);
+                case "GetCurrentPlan" : return GetCurrentPlan (message);
                 default : return GetErrorJSON("WrongMessageType");
             }
         } catch (JSONException|SQLException| MessagingException| ClassNotFoundException e) {
